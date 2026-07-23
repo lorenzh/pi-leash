@@ -5,6 +5,7 @@ Status: approved 2026-07-23
 ## Tech stack
 
 - Production code and tests use strict TypeScript compiled as native ECMAScript modules.
+- Automated TypeScript tests use Vitest.
 - The package supports the minimum Node.js version declared by its installed Pi SDK version or newer.
 - The extension is distributed as an npm Pi package with extension resources declared in the `pi` package manifest.
 - Pi-provided runtime libraries are unbundled peer dependencies with `"*"` ranges, as required by Pi package conventions.
@@ -21,6 +22,7 @@ Status: approved 2026-07-23
 
 ## Testing policy
 
+- Behavioral implementation follows red-green-refactor: change evidence records a focused failing test before production code changes, the smallest implementation that makes it pass, and refactoring only while relevant tests remain green.
 - Protocol encoding, decoding, capability negotiation, lifecycle transitions, validation, cancellation, timeout handling, and adapter behavior require automated unit tests.
 - Integration tests exercise delegation against a deterministic fake ACP agent without requiring external credentials or installed vendor harnesses.
 - Every defect fix includes a regression test that fails without the fix.
