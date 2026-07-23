@@ -17,6 +17,7 @@ pi-leash has an approved constitution but no package metadata, source layout, bu
 - As a contributor, I want explicit module boundaries so that Pi integration, delegation lifecycle, ACP communication, configuration, and process ownership do not become coupled.
 - As a protocol implementer, I want a deterministic fake ACP agent so that later delegation behavior can be tested without credentials or vendor harnesses.
 - As a Pi user, I want the installed package to expose a valid extension entry point without performing background work at load time.
+- As a coding agent, I want concise repository instructions so that I can find authoritative rules, commands, and architecture boundaries without duplicating project documentation.
 
 ## Acceptance criteria
 
@@ -32,6 +33,7 @@ pi-leash has an approved constitution but no package metadata, source layout, bu
 - AC-10: `gh repo view lorenzh/pi-leash --json nameWithOwner,visibility,description,hasIssuesEnabled,defaultBranchRef` reports `lorenzh/pi-leash`, `PUBLIC`, description `A Pi extension for controlling ACP-compatible coding agents as subagents`, issues enabled, and `main` as the default branch; `gh api repos/lorenzh/pi-leash/private-vulnerability-reporting --jq .enabled` reports `true`; the local `origin` points to that repository and its `main` contains the existing constitution plus the approved scaffold history without an auto-generated remote commit.
 - AC-11: Implementation evidence for the extension factory and fake ACP agent records the focused Vitest failure before each behavioral implementation, the corresponding passing focused test after the smallest implementation, and the final green unit and integration suites after refactoring.
 - AC-12: The implementation pull-request diff contains documentation updates alongside every change it makes to setup, public contracts, architecture, security guidance, or contributor workflow; if implementation proceeds without a pull request, `git show` confirms each such change and its affected documentation are in the same commit.
+- AC-13: Root `AGENTS.md` records the project purpose and ACP v1 scope; points to `CONSTITUTION.md` and `docs/` as authoritative sources; lists development, typecheck, unit, integration, build, and pack commands; summarizes dependency direction, TDD, documentation, Conventional Commit, pull-request-title, and secret-handling requirements without duplicating the constitution; and contains no model-routing block.
 
 ## Non-goals
 
@@ -43,6 +45,7 @@ pi-leash has an approved constitution but no package metadata, source layout, bu
 - Supporting experimental ACP v2 or vendor-specific ACP extensions.
 - Publishing the package to npm.
 - Adding a generated documentation site, generated API reference, nested documentation hierarchy, or architecture-decision-record directory.
+- Configuring model routing in `AGENTS.md`.
 
 ## Open questions
 
@@ -68,3 +71,4 @@ pi-leash has an approved constitution but no package metadata, source layout, bu
 - User request dated 2026-07-23 — use stable `typescript@7.0.2` rather than the native preview or another compiler version.
 - User request dated 2026-07-23 — use `vitest@4.1.10`, follow red-green-refactor, and expose separate unit and fake-agent integration test suites.
 - User request dated 2026-07-23 — establish the approved shallow documentation structure and keep affected documentation in the same pull request, or the same commit when no pull request exists.
+- User request dated 2026-07-23 — create a concise root `AGENTS.md` with the approved scope and no model-routing block.
