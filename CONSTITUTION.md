@@ -16,7 +16,7 @@ Status: approved 2026-07-23
 - Data received from Pi, ACP agents, configuration, and child processes is validated at its trust boundary before use.
 - Errors crossing a tool or command boundary are actionable and identify the failed harness, operation, and recovery options.
 - Logs and tool results redact credentials, environment secrets, authentication material, and protocol fields classified as sensitive.
-- New runtime dependencies require a demonstrated need that cannot be met safely by Node.js, Pi APIs, or existing dependencies.
+- New runtime dependencies require a demonstrated need that cannot be met safely by Node.js, Pi APIs, or existing dependencies; accepted packages must have active maintenance, compatible licensing, published security reporting, broad production adoption, and native ESM and supported-Node compatibility.
 - Public tool, configuration, and protocol-facing contracts follow semantic versioning and document breaking changes.
 
 ## Testing policy
