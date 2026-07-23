@@ -55,8 +55,8 @@ pi-leash has an approved constitution but no package metadata, source layout, bu
 
 - `CONSTITUTION.md:5` — required TypeScript, Node.js, Pi-package, peer-dependency, and ACP technology invariants.
 - `CONSTITUTION.md:14` — trust-boundary validation, error, secret-redaction, dependency, and versioning standards.
-- `CONSTITUTION.md:24` — mandatory TDD, unit, fake-agent integration, build, and package verification policy.
-- `CONSTITUTION.md:33` — required ACP/Pi separation, lifecycle ownership, isolation, and fail-closed architecture.
+- `CONSTITUTION.md:25` — mandatory TDD, unit, fake-agent integration, build, and package verification policy.
+- `CONSTITUTION.md:34` — required ACP/Pi separation, lifecycle ownership, isolation, and fail-closed architecture.
 
 ## Requirement sources
 
