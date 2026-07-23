@@ -19,6 +19,7 @@ Status: approved 2026-07-23
 - Logs and tool results redact credentials, environment secrets, authentication material, and protocol fields classified as sensitive.
 - New runtime dependencies require a demonstrated need that cannot be met safely by Node.js, Pi APIs, or existing dependencies; accepted packages must have active maintenance, compatible licensing, published security reporting, broad production adoption, and native ESM and supported-Node compatibility.
 - Public tool, configuration, and protocol-facing contracts follow semantic versioning and document breaking changes.
+- Every change that alters documented behavior, public contracts, setup, architecture, security guidance, or contributor workflows updates the affected documentation in the same pull request, or in the same commit when no pull request exists.
 
 ## Testing policy
 
