@@ -5,35 +5,40 @@ Status: approved 2026-07-23
 ## Tech stack
 
 - Production code and tests use strict TypeScript compiled as native ECMAScript modules.
-- The package supports Node.js 22.19.0 or newer, matching the minimum runtime of the Pi SDK used by the package.
-- Pi-provided runtime libraries (`@earendil-works/pi-coding-agent`, `@earendil-works/pi-ai`, `@earendil-works/pi-tui`, `@earendil-works/pi-agent-core`, and `typebox`) remain unbundled peer dependencies with `"*"` ranges.
-- The package is distributed as an npm Pi package and declares its extension and skill resources in the `pi` package manifest.
+- The package supports the minimum Node.js version declared by its installed Pi SDK version or newer.
+- The extension is distributed as an npm Pi package with extension resources declared in the `pi` package manifest.
+- Pi-provided runtime libraries are unbundled peer dependencies with `"*"` ranges, as required by Pi package conventions.
+- Agent Harness Protocol support conforms to a published specification version recorded in package metadata or project documentation.
 
 ## Coding standards
 
-- Public APIs and cross-module data use explicit exported types; unchecked `any` and unvalidated external data are prohibited.
-- Errors crossing the tool or command boundary are actionable and identify the failed harness, operation, or allowed policy values.
-- New runtime dependencies require a demonstrated need that cannot be met by Node.js or Pi APIs.
-- Harness-specific detection, arguments, parsing, cost extraction, and cancellation remain inside the owning adapter.
+- Public APIs and cross-module data use explicit exported types; unchecked `any` is prohibited.
+- Data received from Pi, AHP peers, configuration, and child processes is validated at its trust boundary before use.
+- Errors crossing a tool or command boundary are actionable and identify the failed harness, operation, and recovery options.
+- Logs and tool results redact credentials, environment secrets, authentication material, and protocol fields classified as sensitive.
+- New runtime dependencies require a demonstrated need that cannot be met safely by Node.js, Pi APIs, or existing dependencies.
+- Public tool, configuration, and protocol-facing contracts follow semantic versioning and document breaking changes.
 
 ## Testing policy
 
-- Policy resolution, effort mapping, adapter registry behavior, model filtering, adapter output parsing, and delegation lifecycle require automated unit tests.
+- Protocol encoding, decoding, capability negotiation, lifecycle transitions, validation, cancellation, timeout handling, and adapter behavior require automated unit tests.
+- Integration tests exercise delegation against a deterministic fake AHP harness without requiring external credentials or installed vendor harnesses.
 - Every defect fix includes a regression test that fails without the fix.
-- Tests, strict typechecking, and the production build run before changes are considered complete.
-- Every release additionally passes `npm pack --dry-run` and inspection of the resulting file list.
+- Tests, strict typechecking, and the production build pass before changes are considered complete.
+- Every release passes `npm pack --dry-run` and inspection of the resulting package file list.
 
 ## Architecture principles
 
-- Core delegation depends on the `HarnessAdapter` contract and contains no harness-specific branches.
-- Policy is harness-agnostic and validates harness, model, and effort before any child process or Pi session starts.
-- Missing policy keys and wildcard entries are permissive; an explicit restricted list fails closed with a typed error listing allowed values.
-- Project-local configuration is loaded only when Pi reports the project as trusted.
-- Every delegated run has one lifecycle owner responsible for streaming, timeout handling, cancellation, process or session cleanup, and terminal state.
-- Supervision decisions operate on events pi-leash observes; documentation and code must not imply that external harnesses share or implement AHP.
-- v0.2 supervision remains isolated behind typed hooks so the v0.1 delegation path does not depend on unimplemented supervision behavior.
+- Core delegation depends on typed AHP transport and protocol interfaces and contains no harness-specific branches.
+- AHP behavior conforms strictly to the selected published specification; version differences and vendor extensions remain behind capability negotiation and adapters.
+- UI behavior is isolated from core delegation so the extension operates in Pi TUI, RPC, JSON, and print modes.
+- Every delegated run has one lifecycle owner responsible for streaming, timeout handling, cancellation, cleanup, and terminal state.
+- Concurrent delegated runs have isolated mutable state, process ownership, output streams, and cancellation signals.
+- Every run validates its working directory and capability boundaries before starting and passes only the environment data required by the harness.
+- Every process started by the extension is owned, observable, bounded by cancellation or timeout, and terminated during run completion or session shutdown.
+- AHP input is untrusted external data; malformed or unsupported messages fail closed with typed errors.
 
 ## Amendment process
 
 - Constitution changes require an explicit proposed diff, downstream-impact assessment, and human approval before modification.
-- Approved amendments are committed separately from feature implementation and update affected specs, plans, tests, and documentation before release.
+- Approved amendments are committed separately from feature implementation and update affected specs, plans, tasks, code, tests, verification, and documentation.
