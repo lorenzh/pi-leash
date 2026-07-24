@@ -27,6 +27,8 @@ npm ci
 npm run build
 ```
 
+Both `npm ci` and `npm install` install the repository's Lefthook-managed Git hooks.
+
 To verify that Pi can load the local no-op package for one run:
 
 ```sh
@@ -48,6 +50,10 @@ npm run check:fix
 Use `check` for a read-only formatting, lint, and import-order check. Use `check:fix` to apply
 supported fixes; generated, installed, temporary, and build artifacts covered by `.gitignore` remain
 outside both commands.
+
+Before a commit, Lefthook runs Biome only on supported staged files, applies safe fixes, and
+re-stages those files without changing unrelated unstaged work. Bypass the hook only for exceptional
+diagnosis; `npm run check` remains the full-repository quality gate.
 
 Run the complete verification gates with:
 

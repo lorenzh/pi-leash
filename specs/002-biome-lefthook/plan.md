@@ -36,6 +36,7 @@ Commit strategy: normal commits with no bypass; T2 adds the Lefthook dependency,
 - VERIFIED: With VCS ignore handling, the approved Biome configuration checks 19 tracked supported files and identifies fixable changes only in `src/process/owned-process.ts`, `tests/integration/fake-agent.test.ts`, `tests/support/architecture.ts`, `tests/unit/architecture.test.ts`, `tests/unit/extension.test.ts`, `tests/unit/package.test.ts`, and the three `tsconfig*.json` files (`/tmp/pi-leash-biome-configured.log`).
 - VERIFIED: Contributor commands and gates are documented in `README.md:38-50`, `CONTRIBUTING.md:39-55`, and `AGENTS.md:15-25`.
 - VERIFIED: The base has no active custom Git hooks and uses the default hooks path; Lefthook installation is a feature deliverable.
+- VERIFIED DURING T2 EXECUTION: `npm pack --dry-run` invokes the package `prepare` lifecycle, so the isolated package fixture in `tests/unit/package.test.ts` must copy `lefthook.yml` and initialize a temporary Git repository before exact `lefthook install` can succeed.
 
 ## Task index
 

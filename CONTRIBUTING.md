@@ -10,7 +10,7 @@ npm ci
 ```
 
 Use `npm install` only when intentionally updating dependencies and the
-lockfile.
+lockfile. Both `npm ci` and `npm install` install the repository's Lefthook-managed Git hooks.
 
 ## Code quality
 
@@ -25,6 +25,10 @@ npm run check:fix
 
 `npm run check` performs a read-only formatting, lint, and import-order check. Run
 `npm run check:fix` to apply supported fixes before repeating the check.
+
+The pre-commit hook runs Biome only on supported staged files, applies safe fixes, and re-stages
+those files. It preserves unrelated unstaged work. Bypass hooks with `git commit --no-verify` only
+for exceptional diagnosis; bypassing does not replace the full-repository `npm run check` gate.
 
 ## Test-driven development
 

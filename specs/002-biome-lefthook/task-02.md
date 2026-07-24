@@ -8,15 +8,16 @@
 - Modify: `README.md`
 - Modify: `CONTRIBUTING.md`
 - Modify: `AGENTS.md`
+- Modify: `tests/unit/package.test.ts`
 
 **Interfaces:**
 - Consumes: T1 exact Biome dependency, `biome.json`, `check` scripts, and formatted repository.
 - Produces: exact development dependency `lefthook@2.1.10`; npm script `prepare: lefthook install`; Lefthook `pre-commit` job `biome`; isolated staged-file integration test.
-- Shared files: preserve every T1 dependency/script/doc line; add only Lefthook install, hook, and staged-file behavior. T3 consumes the final package/docs state.
+- Shared files: preserve every T1 dependency/script/doc line; add only Lefthook install, hook, and staged-file behavior. Update the isolated package fixture so npm's required `prepare` lifecycle runs in a valid temporary Git repository with `lefthook.yml`; preserve every package-content assertion. T3 consumes the final package/docs state.
 
 **Blocked by:** task-01
 **Template:** Official Biome Lefthook recipe recorded in `specs/002-biome-lefthook/spec.md:55`.
-**Verified facts:** Exact hook glob, command, `stage_fixed`, isolated assertions, and offline requirement are fixed at `specs/002-biome-lefthook/spec.md:27-28`.
+**Verified facts:** Exact hook glob, command, `stage_fixed`, isolated assertions, and offline requirement are fixed at `specs/002-biome-lefthook/spec.md:27-28`. During first execution, `npm test` proved that `npm pack --dry-run` invokes `prepare`; the existing isolated package fixture is not a Git repository, so exact `lefthook install` exits 128 unless that fixture copies `lefthook.yml` and initializes Git.
 **Executor:** session model
 **Global constraints:**
 - Production code and tests use strict TypeScript compiled as native ECMAScript modules.
@@ -58,6 +59,7 @@ expect(readFileSync(join(temp, "notes.txt"), "utf8")).toBe(unrelatedBefore);
 
 Use `try/finally` to remove the temporary repository, and ensure the hook command environment disables npm network access while retaining PATH.
 - [ ] Run the focused integration test, then `npm run test:integration`; expected all integration tests pass and no repository index/worktree changes are left by the isolated test.
+- [ ] Update `tests/unit/package.test.ts` so its temporary package fixture copies `lefthook.yml` and runs `git init --quiet` before `npm pack --dry-run`; preserve the fixture's existing runtime-artifact and forbidden-file assertions. Run `npm run test:unit`; expected all 3 files/7 tests pass and the package file contract remains unchanged.
 - [ ] Update `README.md`, `CONTRIBUTING.md`, and `AGENTS.md` in the same commit: `npm ci`/`npm install` installs hooks, pre-commit fixes only staged supported files and re-stages them, hooks can be bypassed only for exceptional diagnosis, and `npm run check` remains the full-repository gate.
 - [ ] Stage the T2 files, run `npx lefthook run pre-commit`, inspect staged and unstaged diffs, then run `npm run check`, `npm run typecheck`, `npm test`, and `npm run build`; expected all pass and unrelated work is unchanged.
 - [ ] Commit T2 as `chore(quality): enforce Biome on staged files` and record the actual hook output.
