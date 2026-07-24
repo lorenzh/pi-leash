@@ -69,6 +69,9 @@ npm run build
 npm pack --dry-run --json
 ```
 
+CI preserves this gate order, running the read-only Biome check immediately after installation and
+before typechecking, tests, build, and package inspection.
+
 Inspect the package file list to confirm runtime artifacts and declarations are
 included while source, tests, fixtures, specifications, CI files, and local
 configuration are excluded.

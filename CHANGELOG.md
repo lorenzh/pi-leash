@@ -5,6 +5,12 @@ file.
 
 ## [Unreleased]
 
+### Added
+
+- Repository-wide Biome formatting, linting, and import-order checks for local and CI verification.
+- Lefthook pre-commit checks that fix and re-stage supported staged files while preserving unrelated
+  unstaged work.
+
 ## [0.1.0] - 2026-07-23
 
 ### Added

@@ -68,7 +68,9 @@ npm run build
 npm pack --dry-run --json
 ```
 
-`npm run pack:check` is an alias for the final package inspection command.
+`npm run pack:check` is an alias for the final package inspection command. CI runs the same
+read-only Biome check immediately after installation and before typechecking, tests, build, and
+package inspection.
 
 The unit suite checks extension loading, architecture boundaries, and package
 contents. The integration suite builds and spawns a deterministic fake ACP
