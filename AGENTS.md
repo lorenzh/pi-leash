@@ -12,6 +12,28 @@ repository is still a no-op scaffold.
 - `CONTRIBUTING.md` — contributor workflow and gates
 - `SECURITY.md` — private vulnerability reporting and secret handling
 
+## Model routing (subagent-driven work)
+
+Work subagent-driven: classify every task and route it per the `choosing-models` skill before
+delegating. Plan first when the classification calls for it (Medium and above); delegate
+implementation tasks to subagents per the resulting route.
+
+Models available through Pi's native subagent surface (use the benchmark names shown when building
+the escalation ladder):
+
+| Role | Pi model | Benchmark name |
+| --- | --- | --- |
+| Routable | `openai-codex/gpt-5.4` | `gpt-5-4` |
+| Routable | `openai-codex/gpt-5.5` | `gpt-5-5` |
+| Routable | `openai-codex/gpt-5.6-luna` | `gpt-5-6-luna` |
+| Routable | `openai-codex/gpt-5.6-sol` | `gpt-5-6-sol` |
+| Routable | `openai-codex/gpt-5.6-terra` | `gpt-5-6-terra` |
+| Aux (read-only surveys/searches; never on the ladder) | `openai-codex/gpt-5.4-mini` | — |
+
+Do not pin model/effort routes here. Recompute the ladder from the listed benchmark names, then
+select and escalate according to `choosing-models`. Models missing from the benchmark remain
+excluded from routable work until they have a project evaluation.
+
 ## Commands
 
 ```sh
