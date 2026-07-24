@@ -20,15 +20,9 @@ const isCore = (path: string): boolean =>
 const isForbiddenTarget = (path: string): boolean =>
   path.startsWith("src/pi/") || path.startsWith("src/adapters/");
 
-export function findLayerViolations(
-  modules: readonly SourceModule[],
-): readonly LayerViolation[] {
+export function findLayerViolations(modules: readonly SourceModule[]): readonly LayerViolation[] {
   return modules.flatMap(({ path: source, imports }) =>
-    isCore(source)
-      ? imports
-          .filter(isForbiddenTarget)
-          .map((target) => ({ source, target }))
-      : [],
+    isCore(source) ? imports.filter(isForbiddenTarget).map((target) => ({ source, target })) : [],
   );
 }
 
@@ -70,10 +64,7 @@ const staticModuleSpecifiers = (source: string): readonly string[] => {
     } else if (token === SyntaxKind.ExportKeyword) {
       token = scanner.scan();
       if (token === SyntaxKind.TypeKeyword) token = scanner.scan();
-      if (
-        token !== SyntaxKind.OpenBraceToken &&
-        token !== SyntaxKind.AsteriskToken
-      ) {
+      if (token !== SyntaxKind.OpenBraceToken && token !== SyntaxKind.AsteriskToken) {
         continue;
       }
 
@@ -106,16 +97,12 @@ export function parseSourceModule(path: string, source: string): SourceModule {
   const file = resolve(process.cwd(), path);
   return {
     path: normalized(relative(process.cwd(), file)),
-    imports: staticModuleSpecifiers(source).map((specifier) =>
-      resolveImport(file, specifier),
-    ),
+    imports: staticModuleSpecifiers(source).map((specifier) => resolveImport(file, specifier)),
   };
 }
 
 export function readSourceModules(
   directory = resolve(process.cwd(), "src"),
 ): readonly SourceModule[] {
-  return sourceFiles(directory).map((file) =>
-    parseSourceModule(file, readFileSync(file, "utf8")),
-  );
+  return sourceFiles(directory).map((file) => parseSourceModule(file, readFileSync(file, "utf8")));
 }

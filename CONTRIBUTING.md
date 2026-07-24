@@ -12,6 +12,20 @@ npm ci
 Use `npm install` only when intentionally updating dependencies and the
 lockfile.
 
+## Code quality
+
+Biome checks supported source and configuration files repository-wide and respects the existing
+Git ignore rules. Generated, installed, temporary, and build artifacts ignored by Git are therefore
+outside its scope.
+
+```sh
+npm run check
+npm run check:fix
+```
+
+`npm run check` performs a read-only formatting, lint, and import-order check. Run
+`npm run check:fix` to apply supported fixes before repeating the check.
+
 ## Test-driven development
 
 Behavioral changes follow red-green-refactor:
@@ -42,6 +56,7 @@ Run the complete local gate set:
 
 ```sh
 npm ci
+npm run check
 npm run typecheck
 npm run test:unit
 npm run test:integration

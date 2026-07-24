@@ -48,11 +48,10 @@ const packFiles = (): readonly string[] => {
     }
     symlinkSync(join(projectRoot, "node_modules"), join(packageRoot, "node_modules"), "dir");
     execFileSync("npm", ["run", "build"], { cwd: packageRoot, encoding: "utf8" });
-    const output = execFileSync(
-      "npm",
-      ["pack", "--dry-run", "--json"],
-      { cwd: packageRoot, encoding: "utf8" },
-    );
+    const output = execFileSync("npm", ["pack", "--dry-run", "--json"], {
+      cwd: packageRoot,
+      encoding: "utf8",
+    });
     const parsed: unknown = JSON.parse(output);
     return validatedPackPaths(parsed);
   } finally {
@@ -63,13 +62,15 @@ const packFiles = (): readonly string[] => {
 describe("npm package", () => {
   it("contains runtime artifacts and excludes development files", () => {
     const files = packFiles();
-    expect(files).toEqual(expect.arrayContaining([
-      "dist/index.js",
-      "dist/index.d.ts",
-      "package.json",
-      "README.md",
-      "LICENSE",
-    ]));
+    expect(files).toEqual(
+      expect.arrayContaining([
+        "dist/index.js",
+        "dist/index.d.ts",
+        "package.json",
+        "README.md",
+        "LICENSE",
+      ]),
+    );
     for (const candidate of forbiddenCandidates) {
       expect(files).not.toContain(candidate);
     }

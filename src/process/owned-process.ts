@@ -11,9 +11,5 @@ export interface OwnedProcess {
 }
 
 export interface OwnedProcessSpawner {
-  spawn(
-    command: string,
-    args: readonly string[],
-    options: SpawnOptions,
-  ): OwnedProcess;
+  spawn(command: string, args: readonly string[], options: SpawnOptions): OwnedProcess;
 }

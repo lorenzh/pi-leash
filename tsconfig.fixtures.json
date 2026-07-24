@@ -7,9 +7,5 @@
     "sourceMap": true
   },
   "include": ["tests/fixtures/**/*.ts"],
-  "exclude": [
-    "dist",
-    ".test-dist",
-    "node_modules"
-  ]
+  "exclude": ["dist", ".test-dist", "node_modules"]
 }

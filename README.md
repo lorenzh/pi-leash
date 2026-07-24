@@ -37,8 +37,23 @@ Loading the current scaffold has no user-visible delegation behavior.
 
 ## Verification
 
+Biome checks and formats supported source and configuration files across the repository while
+respecting the existing Git ignore rules:
+
+```sh
+npm run check
+npm run check:fix
+```
+
+Use `check` for a read-only formatting, lint, and import-order check. Use `check:fix` to apply
+supported fixes; generated, installed, temporary, and build artifacts covered by `.gitignore` remain
+outside both commands.
+
+Run the complete verification gates with:
+
 ```sh
 npm ci
+npm run check
 npm run typecheck
 npm run test:unit
 npm run test:integration
