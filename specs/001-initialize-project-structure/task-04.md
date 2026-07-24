@@ -34,48 +34,67 @@
 **Acceptance criteria:** Covers AC-2, AC-3, AC-7, AC-8, AC-9, AC-12, and AC-13. Every local gate passes; CI runs the same gates on Node 22.19.0; package output contains required distribution files and excludes development/spec files; all approved documentation and agent instructions exist and agree with the implementation.
 
 Steps:
-- [ ] RED — create `tests/unit/package.test.ts` with the executable package contract below. Run it before finalizing `package.json.files`; expected RED because source/tests/specs or other development files appear. Record the literal assertion.
+- [ ] RED — create `tests/unit/package.test.ts` with the executable package contract below. Keep package building isolated from the shared root `dist/`, and synthesize every forbidden candidate so exclusion assertions are non-vacuous. Run it before finalizing `package.json.files`; expected RED because the candidates appear or required build artifacts are absent. Record the literal assertion.
 
 ```ts
 import { execFileSync } from "node:child_process";
+import { cpSync, mkdirSync, mkdtempSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { dirname, join } from "node:path";
 import { describe, expect, it } from "vitest";
+
+const forbiddenCandidates = [
+  "tests/leak.ts",
+  "specs/leak.md",
+  ".github/workflows/leak.yml",
+  ".test-dist/leak.js",
+  ".env.test",
+] as const;
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null;
 
-const packFiles = (): readonly string[] => {
-  const output = execFileSync(
-    "npm",
-    ["pack", "--dry-run", "--json"],
-    { encoding: "utf8" },
-  );
-  const parsed: unknown = JSON.parse(output);
-  if (!Array.isArray(parsed) || !isRecord(parsed[0])) {
+const validatedPackPaths = (value: unknown): readonly string[] => {
+  if (!Array.isArray(value) || !isRecord(value[0]) || !Array.isArray(value[0].files)) {
     throw new Error("npm pack returned no result");
   }
-  const files = parsed[0].files;
-  if (!Array.isArray(files) || !files.every(
-    (entry) => isRecord(entry) && typeof entry.path === "string",
-  )) {
+  const files = value[0].files;
+  if (!files.every((entry) => isRecord(entry) && typeof entry.path === "string")) {
     throw new Error("npm pack returned an invalid file list");
   }
   return files.map((entry) => entry.path as string).sort();
+};
+
+const packFiles = (): readonly string[] => {
+  const root = process.cwd();
+  const isolated = mkdtempSync(join(tmpdir(), "pi-leash-package-"));
+  try {
+    for (const path of ["src", "package.json", "tsconfig.json", "tsconfig.build.json", "README.md", "LICENSE", "CHANGELOG.md"]) {
+      cpSync(join(root, path), join(isolated, path), { recursive: true });
+    }
+    for (const path of forbiddenCandidates) {
+      const target = join(isolated, path);
+      mkdirSync(dirname(target), { recursive: true });
+      writeFileSync(target, "must not be packed\n", "utf8");
+    }
+    symlinkSync(join(root, "node_modules"), join(isolated, "node_modules"), "dir");
+    execFileSync("npm", ["run", "build"], { cwd: isolated, encoding: "utf8" });
+    const output = execFileSync("npm", ["pack", "--dry-run", "--json"], { cwd: isolated, encoding: "utf8" });
+    const parsed: unknown = JSON.parse(output);
+    // Validate the unknown npm output before reading files[].path.
+    return validatedPackPaths(parsed);
+  } finally {
+    rmSync(isolated, { recursive: true, force: true });
+  }
 };
 
 describe("npm package", () => {
   it("contains runtime artifacts and excludes development files", () => {
     const files = packFiles();
     expect(files).toEqual(expect.arrayContaining([
-      "dist/index.js",
-      "dist/index.d.ts",
-      "package.json",
-      "README.md",
-      "LICENSE",
+      "dist/index.js", "dist/index.d.ts", "package.json", "README.md", "LICENSE",
     ]));
-    expect(files).not.toEqual(expect.arrayContaining([
-      expect.stringMatching(/^(?:src|tests|specs|\.github|\.test-dist)\//),
-      expect.stringMatching(/(?:^|\/)\.env(?:\.|$)/),
-    ]));
+    expect(files).not.toEqual(expect.arrayContaining(forbiddenCandidates));
   });
 });
 ```
