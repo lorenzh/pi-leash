@@ -39,7 +39,7 @@ Commit strategy: normal commits; `core.hooksPath` is default and no active custo
 - VERIFIED: The official ACP SDK v1.3.0 examples use `ndJsonStream`, `agent(...)`, `client(...)`, `initialize`, `buildSession(cwd)`, `session.prompt(...)`, and `session.nextUpdate()` over child stdio (SDK source recorded at `specs/001-initialize-project-structure/spec.md:68`).
 - VERIFIED: The base fork contains only `CONSTITUTION.md`; no package, source, test, documentation, CI, remote, or hook implementation exists (`git ls-tree -r --name-only 9ee07cb53846d5df8298ecdc0244749d3ed1c13e`).
 - VERIFIED: T1 created `build:test-fixtures` but `test:integration` currently invokes only Vitest, so T3 must change that script to compile fixtures before running integration tests (`package.json:27-31`).
-- VERIFIED: T4 package verification must isolate its build from the concurrently used root `dist/` and must place representative forbidden candidates in that isolated package root so exclusion assertions are non-vacuous (`tests/unit/package.test.ts:8-65`; `specs/001-initialize-project-structure/task-04-review.md`, F2-F3).
+- VERIFIED: T4 package verification must isolate its build from the concurrently used root `dist/` and must place representative forbidden candidates in that isolated package root and assert each candidate's exclusion independently so the checks are non-vacuous (`tests/unit/package.test.ts:8-65`; `specs/001-initialize-project-structure/task-04-review.md`, F2-F3).
 
 ## Task index
 

@@ -94,7 +94,9 @@ describe("npm package", () => {
     expect(files).toEqual(expect.arrayContaining([
       "dist/index.js", "dist/index.d.ts", "package.json", "README.md", "LICENSE",
     ]));
-    expect(files).not.toEqual(expect.arrayContaining(forbiddenCandidates));
+    for (const candidate of forbiddenCandidates) {
+      expect(files).not.toContain(candidate);
+    }
   });
 });
 ```
