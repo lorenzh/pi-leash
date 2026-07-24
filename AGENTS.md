@@ -32,7 +32,9 @@ ignore rules, so generated, installed, temporary, and build artifacts remain out
 `npm ci` and `npm install` install the Lefthook-managed Git hooks. The pre-commit hook fixes and
 re-stages only supported staged files while preserving unrelated unstaged work; bypass it only for
 exceptional diagnosis. `npm run check` remains the full-repository gate and runs in CI immediately
-after installation, before typechecking, tests, build, and package inspection.
+after installation, before typechecking, tests, build, and package inspection. When programmatically parsing
+`npm pack --dry-run --json`, account for `prepare` lifecycle output before the JSON; follow the
+standalone-array parsing used in `tests/unit/package.test.ts`.
 
 Keep Pi integration and adapters outside the ACP and application core; core
 code depends on typed transport and lifecycle ports. Follow red-green-refactor
