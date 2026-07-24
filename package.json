@@ -23,6 +23,12 @@
       "./dist/index.js"
     ]
   },
+  "files": [
+    "dist/",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
   "scripts": {
     "clean": "node --eval \"import { rmSync } from 'node:fs'; for (const path of ['dist', '.test-dist']) rmSync(path, { recursive: true, force: true });\"",
     "build": "tsc --project tsconfig.build.json",

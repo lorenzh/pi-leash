@@ -1,49 +1,65 @@
 # Contributing to pi-leash
 
-## Setup
+## Environment setup
 
-Use Node.js 22.19.0 or newer, then install the exact locked dependencies:
-
-```sh
-npm install
-```
-
-For a clean checkout or CI-style install, use `npm ci` once the lockfile is
-present.
-
-## Development commands
+Use Node.js 22.19.0 or newer. From a clean checkout, install the exact locked
+dependencies:
 
 ```sh
-npm run typecheck
-npm run build
-npm run test:unit
-npm run test:integration
-npm test
-npm run pack:check
+npm ci
 ```
 
-The unit and integration commands are established for the behavioral work that
-follows this initial scaffold. Until tests are added, they fail rather than
-silently passing with no tests.
+Use `npm install` only when intentionally updating dependencies and the
+lockfile.
 
 ## Test-driven development
 
 Behavioral changes follow red-green-refactor:
 
-1. Add a focused test and record its expected failure.
-2. Make the smallest production change that passes the test.
+1. Add a focused test and record the failing command and literal assertion.
+2. Make the smallest production change that passes that test.
 3. Refactor only while the relevant tests remain green.
 
-Defect fixes require a regression test. Integration tests must use the
-repository's deterministic fake ACP agent and must not require credentials or
-vendor harnesses.
+Defect fixes require a regression test. Keep the red and green command output
+as review evidence.
 
-## Documentation and change history
+Unit and integration coverage are separate:
+
+```sh
+npm run test:unit
+npm run test:integration
+npm test
+```
+
+Unit tests cover isolated behavior and architecture rules. Integration tests
+build and spawn the deterministic fake ACP agent over local stdio; they must
+not require network access, credentials, or installed vendor harnesses.
+`npm test` runs both suites.
+
+## Pre-pull-request gates
+
+Run the complete local gate set:
+
+```sh
+npm ci
+npm run typecheck
+npm run test:unit
+npm run test:integration
+npm test
+npm run build
+npm pack --dry-run --json
+```
+
+Inspect the package file list to confirm runtime artifacts and declarations are
+included while source, tests, fixtures, specifications, CI files, and local
+configuration are excluded.
+
+## Documentation and history
 
 Update documentation in the same pull request as changes to setup, behavior,
 public contracts, architecture, security guidance, or contributor workflows.
-When working without a pull request, keep the implementation and its affected
-documentation in the same commit.
+Without a pull request, keep implementation and affected documentation in the
+same commit.
 
 Use Conventional Commits 1.0.0 for commits and pull-request titles:
 
@@ -51,5 +67,5 @@ Use Conventional Commits 1.0.0 for commits and pull-request titles:
 type(scope): description
 ```
 
-The scope is optional, so `type: description` is also valid. Pull-request
-titles should summarize the overall change in the same format.
+The scope is optional, so `type: description` is also valid. A pull-request
+title must summarize the overall change in the same format.
