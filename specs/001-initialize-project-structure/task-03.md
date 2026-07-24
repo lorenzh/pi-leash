@@ -1,14 +1,15 @@
 # T3: Fake ACP stdio integration (specs/001-initialize-project-structure)
 
 **Files:**
+- Modify: `package.json` (`test:integration` compiles fixtures before Vitest)
 - Create: `tests/fixtures/fake-acp-agent.ts`
 - Create: `tests/integration/fake-agent.test.ts`
 - Create: `docs/acp.md`
 
 **Interfaces:**
 - Consumes: T1 `build:test-fixtures` and `integration` Vitest project; official ACP SDK exports `PROTOCOL_VERSION`, `ndJsonStream`, `agent`, `client`, and `methods`.
-- Produces: compiled `.test-dist/tests/fixtures/fake-acp-agent.js`; deterministic session id `fake-session-1`; streamed text `fake-agent-ready`; prompt response `{ stopReason: "end_turn" }`.
-- Shared files: none.
+- Produces: `test:integration` script that runs `build:test-fixtures` before Vitest; compiled `.test-dist/tests/fixtures/fake-acp-agent.js`; deterministic session id `fake-session-1`; streamed text `fake-agent-ready`; prompt response `{ stopReason: "end_turn" }`.
+- Shared files: `package.json` retains T1's exact versions and all existing scripts; T3 changes only `test:integration` to compile fixtures before Vitest.
 
 **Blocked by:** task-01
 **Template:** Official ACP SDK v1.3.0 agent/client examples recorded at `spec.md:68`.
@@ -87,7 +88,7 @@ describe("fake ACP agent", () => {
 
 - [ ] Run `npx vitest run --project integration tests/integration/fake-agent.test.ts` before creating the fixture; expected RED: the child/ACP connection closes because the compiled fake-agent module does not exist. Record the literal failure.
 - [ ] GREEN — implement `tests/fixtures/fake-acp-agent.ts` with `Writable.toWeb(process.stdout)`, `Readable.toWeb(process.stdin)`, `acp.ndJsonStream`, and `acp.agent({ name: "pi-leash-fake" })`. Register only `initialize`, `session/new`, and `session/prompt`; return protocol version 1/current `PROTOCOL_VERSION`, deterministic `fake-session-1`, one `agent_message_chunk` containing `fake-agent-ready`, and `end_turn`. Await `connect(stream)` so EOF permits clean process exit.
-- [ ] Run `npm run build:test-fixtures` and the focused integration test. After the prompt response, call `child.stdin.end()`, await the child `exit` event with a bounded test timeout, and assert exit code 0, `stopReason === "end_turn"`, and the streamed text. In `afterEach`, terminate any still-owned child and fail on forced cleanup so leaks cannot pass silently.
+- [ ] Update only `package.json`'s `test:integration` script to `npm run build:test-fixtures && vitest run --project integration`. Run `rm -rf .test-dist && npm run test:integration`; expected: fixture compilation runs first and the integration test passes from a clean artifact state. After the prompt response, call `child.stdin.end()`, await the child `exit` event with a bounded test timeout, and assert exit code 0, `stopReason === "end_turn"`, and the streamed text. In `afterEach`, terminate any still-owned child and fail on forced cleanup so leaks cannot pass silently.
 - [ ] Refactor only under green tests. Run `npm run typecheck` and `npm run test:integration`; expected: both exit 0. T4 owns the first combined `npm test` gate after both independent test projects exist.
 - [ ] Create `docs/acp.md` in the same commit, recording stable wire protocol v1/schema v1.20.0, SDK v1.3.0, local stdio lifecycle, capability negotiation, test-fixture behavior, security boundary, sequential follow-up prompts, cancel-and-reprompt steering, and the lack of portable non-cancelling mid-turn steering. T4 owns the final root documentation index after both T2 and T3 complete.
 - [ ] Commit T3 together as `test(acp): add deterministic stdio agent`.

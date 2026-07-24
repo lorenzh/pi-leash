@@ -1,6 +1,6 @@
 # Plan: Initialize project structure
 
-Status: approved 2026-07-23
+Status: approved 2026-07-24
 Goal: Establish a reproducible, documented, test-driven Pi extension scaffold with typed ACP boundaries, a fake ACP v1 integration agent, release gates, and a public GitHub home.
 Approach: Build one layered npm package in five dependency-ordered tasks. Establish the compiler/test foundation first, add the no-op Pi and architectural boundaries with unit-level TDD, add the stdio fake agent with integration-level TDD, complete distribution/CI/documentation, then create and verify the public repository.
 Human-only prerequisites: none; `gh auth status` confirms authenticated `lorenzh` access with `repo` and `workflow` scopes.
@@ -38,6 +38,7 @@ Commit strategy: normal commits; `core.hooksPath` is default and no active custo
 - VERIFIED: Pi extensions export a default factory receiving `ExtensionAPI`, and factories must not start long-lived resources; startup belongs in session/tool/command paths with shutdown cleanup (`CONSTITUTION.md:38-42`; Pi 0.81.1 extension source recorded at `specs/001-initialize-project-structure/spec.md:64`).
 - VERIFIED: The official ACP SDK v1.3.0 examples use `ndJsonStream`, `agent(...)`, `client(...)`, `initialize`, `buildSession(cwd)`, `session.prompt(...)`, and `session.nextUpdate()` over child stdio (SDK source recorded at `specs/001-initialize-project-structure/spec.md:68`).
 - VERIFIED: The base fork contains only `CONSTITUTION.md`; no package, source, test, documentation, CI, remote, or hook implementation exists (`git ls-tree -r --name-only 9ee07cb53846d5df8298ecdc0244749d3ed1c13e`).
+- VERIFIED: T1 created `build:test-fixtures` but `test:integration` currently invokes only Vitest, so T3 must change that script to compile fixtures before running integration tests (`package.json:27-31`).
 
 ## Task index
 
