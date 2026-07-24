@@ -9,11 +9,5 @@
     "sourceMap": true
   },
   "include": ["src/**/*.ts"],
-  "exclude": [
-    "tests",
-    "specs",
-    "dist",
-    ".test-dist",
-    "node_modules"
-  ]
+  "exclude": ["tests", "specs", "dist", ".test-dist", "node_modules"]
 }

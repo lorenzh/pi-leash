@@ -27,6 +27,8 @@ npm ci
 npm run build
 ```
 
+Both `npm ci` and `npm install` install the repository's Lefthook-managed Git hooks.
+
 To verify that Pi can load the local no-op package for one run:
 
 ```sh
@@ -37,8 +39,27 @@ Loading the current scaffold has no user-visible delegation behavior.
 
 ## Verification
 
+Biome checks and formats supported source and configuration files across the repository while
+respecting the existing Git ignore rules:
+
+```sh
+npm run check
+npm run check:fix
+```
+
+Use `check` for a read-only formatting, lint, and import-order check. Use `check:fix` to apply
+supported fixes; generated, installed, temporary, and build artifacts covered by `.gitignore` remain
+outside both commands.
+
+Before a commit, Lefthook runs Biome only on supported staged files, applies safe fixes, and
+re-stages those files without changing unrelated unstaged work. Bypass the hook only for exceptional
+diagnosis; `npm run check` remains the full-repository quality gate.
+
+Run the complete verification gates with:
+
 ```sh
 npm ci
+npm run check
 npm run typecheck
 npm run test:unit
 npm run test:integration
@@ -47,7 +68,9 @@ npm run build
 npm pack --dry-run --json
 ```
 
-`npm run pack:check` is an alias for the final package inspection command.
+`npm run pack:check` is an alias for the final package inspection command. CI runs the same
+read-only Biome check immediately after installation and before typechecking, tests, build, and
+package inspection.
 
 The unit suite checks extension loading, architecture boundaries, and package
 contents. The integration suite builds and spawns a deterministic fake ACP

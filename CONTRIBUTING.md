@@ -10,7 +10,25 @@ npm ci
 ```
 
 Use `npm install` only when intentionally updating dependencies and the
-lockfile.
+lockfile. Both `npm ci` and `npm install` install the repository's Lefthook-managed Git hooks.
+
+## Code quality
+
+Biome checks supported source and configuration files repository-wide and respects the existing
+Git ignore rules. Generated, installed, temporary, and build artifacts ignored by Git are therefore
+outside its scope.
+
+```sh
+npm run check
+npm run check:fix
+```
+
+`npm run check` performs a read-only formatting, lint, and import-order check. Run
+`npm run check:fix` to apply supported fixes before repeating the check.
+
+The pre-commit hook runs Biome only on supported staged files, applies safe fixes, and re-stages
+those files. It preserves unrelated unstaged work. Bypass hooks with `git commit --no-verify` only
+for exceptional diagnosis; bypassing does not replace the full-repository `npm run check` gate.
 
 ## Test-driven development
 
@@ -42,6 +60,7 @@ Run the complete local gate set:
 
 ```sh
 npm ci
+npm run check
 npm run typecheck
 npm run test:unit
 npm run test:integration
@@ -49,6 +68,9 @@ npm test
 npm run build
 npm pack --dry-run --json
 ```
+
+CI preserves this gate order, running the read-only Biome check immediately after installation and
+before typechecking, tests, build, and package inspection.
 
 Inspect the package file list to confirm runtime artifacts and declarations are
 included while source, tests, fixtures, specifications, CI files, and local

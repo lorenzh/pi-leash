@@ -1,4 +1,4 @@
-import { spawn, type ChildProcessWithoutNullStreams } from "node:child_process";
+import { type ChildProcessWithoutNullStreams, spawn } from "node:child_process";
 import { once } from "node:events";
 import { Readable, Writable } from "node:stream";
 import * as acp from "@agentclientprotocol/sdk";
@@ -10,11 +10,7 @@ afterEach(async () => {
   const ownedChild = child;
   child = undefined;
 
-  if (
-    !ownedChild ||
-    ownedChild.exitCode !== null ||
-    ownedChild.signalCode !== null
-  ) {
+  if (!ownedChild || ownedChild.exitCode !== null || ownedChild.signalCode !== null) {
     return;
   }
 
@@ -26,15 +22,11 @@ afterEach(async () => {
 
 describe("fake ACP agent", () => {
   it("streams one prompt and exits when the client closes", async () => {
-    child = spawn(
-      process.execPath,
-      [".test-dist/tests/fixtures/fake-acp-agent.js"],
-      { stdio: ["pipe", "pipe", "pipe"] },
-    );
+    child = spawn(process.execPath, [".test-dist/tests/fixtures/fake-acp-agent.js"], {
+      stdio: ["pipe", "pipe", "pipe"],
+    });
     const input = Writable.toWeb(child.stdin);
-    const output = Readable.toWeb(
-      child.stdout,
-    ) as ReadableStream<Uint8Array>;
+    const output = Readable.toWeb(child.stdout) as ReadableStream<Uint8Array>;
     const updates: acp.SessionNotification[] = [];
 
     const response = await acp
@@ -68,10 +60,7 @@ describe("fake ACP agent", () => {
     ).toBe(true);
 
     child.stdin.end();
-    const [code] = (await once(child, "exit")) as [
-      number | null,
-      NodeJS.Signals | null,
-    ];
+    const [code] = (await once(child, "exit")) as [number | null, NodeJS.Signals | null];
     expect(code).toBe(0);
   }, 5_000);
 });

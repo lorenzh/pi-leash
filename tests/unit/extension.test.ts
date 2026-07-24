@@ -1,16 +1,19 @@
-import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { execFileSync } from "node:child_process";
+import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import extension from "../../src/index.js";
 
-const resources = (): readonly string[] =>
-  [...process.getActiveResourcesInfo()].sort();
+const resources = (): readonly string[] => [...process.getActiveResourcesInfo()].sort();
 
-const rejectingPi = (): ExtensionAPI => new Proxy({}, {
-  get(_target, property) {
-    throw new Error(`unexpected Pi API access: ${String(property)}`);
-  },
-}) as unknown as ExtensionAPI;
+const rejectingPi = (): ExtensionAPI =>
+  new Proxy(
+    {},
+    {
+      get(_target, property) {
+        throw new Error(`unexpected Pi API access: ${String(property)}`);
+      },
+    },
+  ) as unknown as ExtensionAPI;
 
 describe("extension scaffold", () => {
   let compiledExtension: typeof extension;

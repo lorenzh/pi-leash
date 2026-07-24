@@ -16,6 +16,8 @@ repository is still a no-op scaffold.
 
 ```sh
 npm ci
+npm run check
+npm run check:fix
 npm run typecheck
 npm run test:unit
 npm run test:integration
@@ -23,6 +25,16 @@ npm test
 npm run build
 npm pack --dry-run --json
 ```
+
+`npm run check` performs a read-only repository-wide Biome check. `npm run check:fix` applies
+formatting, lint, and import-order fixes to supported files. Both commands respect the existing Git
+ignore rules, so generated, installed, temporary, and build artifacts remain outside their scope.
+`npm ci` and `npm install` install the Lefthook-managed Git hooks. The pre-commit hook fixes and
+re-stages only supported staged files while preserving unrelated unstaged work; bypass it only for
+exceptional diagnosis. `npm run check` remains the full-repository gate and runs in CI immediately
+after installation, before typechecking, tests, build, and package inspection. When programmatically parsing
+`npm pack --dry-run --json`, account for `prepare` lifecycle output before the JSON; follow the
+standalone-array parsing used in `tests/unit/package.test.ts`.
 
 Keep Pi integration and adapters outside the ACP and application core; core
 code depends on typed transport and lifecycle ports. Follow red-green-refactor
